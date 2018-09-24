@@ -86,7 +86,8 @@ Pod::Spec.new do |s|
   #
 
   # s.source_files  = "Classes", "Classes/**/*.{h,m}"
-  s.source_files  = "SpotSense", "SpotSenseApp", "Rule"
+  s.source_files  = "SpotSenseSDK/*.swift"
+  # SpotSense.swift", "SpotSenseApp.swift", "Rule.swift"
   s.exclude_files = "Classes/Exclude"
 
   # s.public_header_files = "Classes/**/*.h"
@@ -111,6 +112,9 @@ Pod::Spec.new do |s|
   #  Link your library with frameworks, or libraries. Libraries do not include
   #  the lib prefix of their name.
   #
+
+  s.dependency 'Alamofire'
+  s.dependency 'JWTDecode'
 
   # s.framework  = "SomeFramework"
   # s.frameworks = "SomeFramework", "AnotherFramework"
