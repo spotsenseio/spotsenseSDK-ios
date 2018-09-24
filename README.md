@@ -38,7 +38,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, SpotSenseDele
 4. Ask to use a user's location and add delegates to handle location updates
 Note: Apple requires developers to add a description of why they are using a users location to Info.plist
 
-```
+```swift
 let locationManager : CLLocationManager = CLLocationManager()
 let notificationCenter = UNUserNotificationCenter.current()
 
