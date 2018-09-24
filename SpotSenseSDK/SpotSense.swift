@@ -62,7 +62,7 @@ open class SpotSense {
     // API base URL
     let spotsenseURL = "https://hc5e9wpgpb.execute-api.us-west-1.amazonaws.com/dev"
     
-    init(clientID: String, clientSecret: String) { // init this spotsense instant
+    public init(clientID: String, clientSecret: String) { // init this spotsense instant
         self.clientID = clientID
         self.clientSecret = clientSecret
         self.deviceID = (UIDevice.current.identifierForVendor?.uuidString)!

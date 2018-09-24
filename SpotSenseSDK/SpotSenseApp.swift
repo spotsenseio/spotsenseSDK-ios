@@ -11,7 +11,7 @@ open class SpotSenseApp {
     public var appID:String
     public var appName: String
     
-    init (appID: String, appName: String) {
+    public init (appID: String, appName: String) {
         self.appID = appID
         self.appName = appName
     }
