@@ -18,7 +18,7 @@
     ```
     target 'your-app' do
         # Pods for your-app
-        pod 'SpotSense', '~>1.0'
+        pod 'SpotSense', '~>0.1'
     end
     ```
 
