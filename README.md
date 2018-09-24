@@ -60,9 +60,9 @@ override func viewDidLoad() {
 func ruleDidTrigger(response: NotifyResponse, ruleID: String) { // delegate for handling rule triggers
     switch response.getActionType() {
     case "segue":
-    if let segueID = response.segueID {
-        performSegue(withIdentifier: segueID, sender: nil)
-    }
+        if let segueID = response.segueID {
+            performSegue(withIdentifier: segueID, sender: nil)
+        }
     case "http":
         print("HTTP Response: (String(describing: response.getHTTPResponse()))")
     default:
