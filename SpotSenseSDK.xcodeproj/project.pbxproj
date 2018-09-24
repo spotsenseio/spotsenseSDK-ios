@@ -16,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		32280F082158884C00D8093B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		324316F92156264900ABDA34 /* SpotSenseSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpotSenseSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		324316FC2156264900ABDA34 /* SpotSenseSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpotSenseSDK.h; sourceTree = "<group>"; };
 		324316FD2156264900ABDA34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -53,6 +54,7 @@
 			isa = PBXGroup;
 			children = (
 				3243170E215869F500ABDA34 /* LICENSE */,
+				32280F082158884C00D8093B /* README.md */,
 				324316FB2156264900ABDA34 /* SpotSenseSDK */,
 				324316FA2156264900ABDA34 /* Products */,
 				1DE97024E1657BE67EC4596B /* Pods */,
