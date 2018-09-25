@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SpotSense"
-  s.version      = "0.1.0"
+  s.version      = "0.1.1"
   s.summary      = "SpotSense is a web app and SDK for adding geofences to mobile apps"
 
   # This description is used to generate tags and improve search results.
@@ -59,8 +59,8 @@ Pod::Spec.new do |s|
   #  the deployment target. You can optionally include the target after the platform.
   #
 
-  s.platform     = :ios, "11.0"
-  s.swift_version = '4.2'
+  s.platform     = :ios, "10.0"
+  s.swift_version = '4.0'
 
   #  When using multiple platforms
   # s.ios.deployment_target = "5.0"

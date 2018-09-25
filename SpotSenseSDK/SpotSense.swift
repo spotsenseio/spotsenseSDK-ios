@@ -72,7 +72,7 @@ open class SpotSense {
         }
         
         self.initApp(completion: {
-            print("Init complete")
+            print("Spotsense initialization complete")
         })
     }
     
@@ -263,9 +263,9 @@ open class SpotSense {
         self.notificationsEnabled = enabled
         
         if enabled {
-            print("Notifications enabled")
+//            print("Notifications enabled")
         } else {
-            print("Notifications not enabled")
+//            print("Notifications not enabled")
         }
     }
     
@@ -316,7 +316,7 @@ open class SpotSense {
                 case .success( _):
                     if let app = response.result.value as? NSDictionary {
                         if let name = app["name"] {
-                            print ("Name: \(name)")
+//                            print ("Name: \(name)")
                             let appRes = SpotSenseApp(appID: self.clientID, appName: name as! String)
                             completion(appRes)
                         } else {
