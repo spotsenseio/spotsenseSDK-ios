@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SpotSense"
-  s.version      = "1.0.0"
+  s.version      = "0.1.2"
   s.summary      = "SpotSense is a web app and SDK for adding geofences to mobile apps"
 
   # This description is used to generate tags and improve search results.
@@ -59,7 +59,8 @@ Pod::Spec.new do |s|
   #  the deployment target. You can optionally include the target after the platform.
   #
 
-  s.platform     = :ios, "11.0"
+  s.platform     = :ios, "10.0"
+  s.swift_version = '4.0'
 
   #  When using multiple platforms
   # s.ios.deployment_target = "5.0"
@@ -86,7 +87,8 @@ Pod::Spec.new do |s|
   #
 
   # s.source_files  = "Classes", "Classes/**/*.{h,m}"
-  s.source_files  = "SpotSense", "SpotSenseApp", "Rule"
+  s.source_files  = "SpotSenseSDK/*.swift"
+  # SpotSense.swift", "SpotSenseApp.swift", "Rule.swift"
   s.exclude_files = "Classes/Exclude"
 
   # s.public_header_files = "Classes/**/*.h"
@@ -111,6 +113,9 @@ Pod::Spec.new do |s|
   #  Link your library with frameworks, or libraries. Libraries do not include
   #  the lib prefix of their name.
   #
+
+  s.dependency 'Alamofire'
+  s.dependency 'JWTDecode'
 
   # s.framework  = "SomeFramework"
   # s.frameworks = "SomeFramework", "AnotherFramework"

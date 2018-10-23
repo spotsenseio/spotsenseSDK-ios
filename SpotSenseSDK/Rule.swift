@@ -61,7 +61,6 @@ open class Rule {
         if (self.getActionType() == "notification") {
             let content = UNMutableNotificationContent()
             content.body = self.action.message!
-            content.setValue("YES", forKeyPath: "shouldAlwaysAlertWhileAppIsForeground")
 
             let center = self.geofence.center
             let region = CLCircularRegion(center: center, radius: self.geofence.radiusSize, identifier: self.id)
