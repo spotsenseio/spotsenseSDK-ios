@@ -38,7 +38,7 @@ open class Rule {
     public let locationManager: CLLocationManager = CLLocationManager()
 
     
-    init (ruleDict: NSDictionary) {
+    public init (ruleDict: NSDictionary) {
         self.action = Action(actionDict: ruleDict["action"] as! NSDictionary)
         self.enabled = ruleDict["enabled"] as! Bool
         self.id = ruleDict["id"] as! String
@@ -133,7 +133,7 @@ open class Trigger {
     public let time: Int
     public let triggerType: triggerType
     
-    init (triggerDict: NSDictionary) { // time is 0 when not a dwell rule
+    public init (triggerDict: NSDictionary) { // time is 0 when not a dwell rule
         if let t = triggerDict["time"] as? Int {
             self.time = t
         } else {
@@ -167,7 +167,7 @@ open class Geofence {
         case polygon
     }
     
-    init(geofenceDict: NSDictionary) {
+    public init(geofenceDict: NSDictionary) {
         let centerDict = geofenceDict["center"] as! NSDictionary
         
         let latStr = centerDict["lat"] as! String
@@ -202,7 +202,7 @@ open class Action {
     public var message:String?
     public var segueID:String?
 
-    init(actionDict: NSDictionary) {
+    public init(actionDict: NSDictionary) {
         let actionTypeStr = actionDict["actionType"] as! String
         
         switch actionTypeStr {
@@ -229,7 +229,7 @@ open class NotifyResponse {
     public var httpResponse:NSDictionary?
     public var segueID:String?
     
-    init(responseDict: NSDictionary) {
+    public init(responseDict: NSDictionary) {
         self.triggered = responseDict["triggered"] as! Bool
         self.message = responseDict["message"] as! String
         if (self.triggered) {

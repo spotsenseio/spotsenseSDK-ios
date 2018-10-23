@@ -62,7 +62,7 @@ open class SpotSense {
     // API base URL
     let spotsenseURL = "https://hc5e9wpgpb.execute-api.us-west-1.amazonaws.com/dev"
     
-    init(clientID: String, clientSecret: String) { // init this spotsense instant
+    public init(clientID: String, clientSecret: String) { // init this spotsense instant
         self.clientID = clientID
         self.clientSecret = clientSecret
         self.deviceID = (UIDevice.current.identifierForVendor?.uuidString)!
@@ -72,7 +72,7 @@ open class SpotSense {
         }
         
         self.initApp(completion: {
-            print("Init complete")
+            print("Spotsense initialization complete")
         })
     }
     
@@ -263,9 +263,9 @@ open class SpotSense {
         self.notificationsEnabled = enabled
         
         if enabled {
-            print("Notifications enabled")
+//            print("Notifications enabled")
         } else {
-            print("Notifications not enabled")
+//            print("Notifications not enabled")
         }
     }
     
@@ -316,7 +316,7 @@ open class SpotSense {
                 case .success( _):
                     if let app = response.result.value as? NSDictionary {
                         if let name = app["name"] {
-                            print ("Name: \(name)")
+//                            print ("Name: \(name)")
                             let appRes = SpotSenseApp(appID: self.clientID, appName: name as! String)
                             completion(appRes)
                         } else {
