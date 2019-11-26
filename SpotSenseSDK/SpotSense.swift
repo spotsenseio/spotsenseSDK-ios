@@ -19,7 +19,7 @@
 //
 //  SpotSense.swift
 //
-//  Copyright © 2018 SpotSense (Sonora Data, LLC). All rights
+//  Copyright © 2019 SpotSense (SpotSense, LLC). All rights
 
 /*
  Public Methods:
@@ -60,7 +60,7 @@ open class SpotSense {
 
     
     // API base URL
-    let spotsenseURL = "https://hc5e9wpgpb.execute-api.us-west-1.amazonaws.com/dev"
+    let spotsenseURL = "https://3o7us23hzl.execute-api.us-west-1.amazonaws.com/roor"
     
     public init(clientID: String, clientSecret: String) { // init this spotsense instant
         self.clientID = clientID
