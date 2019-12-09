@@ -39,12 +39,12 @@ open class Rule {
 
     
     public init (ruleDict: NSDictionary) {
-        self.action = Action(actionDict: ruleDict["action"] as! NSDictionary)
-        self.enabled = ruleDict["enabled"] as! Bool
-        self.id = ruleDict["id"] as! String
-        self.geofence = Geofence(geofenceDict: ruleDict["geofence"] as! NSDictionary)
-        self.name = ruleDict["name"] as! String
-        self.trigger = Trigger(triggerDict: ruleDict["trigger"] as! NSDictionary)
+        self.action = Action(actionDict: ruleDict["action"] as? NSDictionary)
+        self.enabled = ruleDict["enabled"] as? Bool
+        self.id = ruleDict["id"] as? String
+        self.geofence = Geofence(geofenceDict: ruleDict["geofence"] as? NSDictionary)
+        self.name = ruleDict["name"] as? String
+        self.trigger = Trigger(triggerDict: ruleDict["trigger"] as? NSDictionary)
     }
     
     open func initGeofence() {
