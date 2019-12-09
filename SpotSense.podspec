@@ -50,7 +50,7 @@ Pod::Spec.new do |s|
   #  profile URL.
   #
 
-  s.author             = { "spotsenseio" => "jonny@spotsense.io" }
+  s.author             = { "spotsenseio" => "zak@spotsense.io" }
   s.social_media_url = "https://twitter.com/spotsenseio"
 
   # ――― Platform Specifics ――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
