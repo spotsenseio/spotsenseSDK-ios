@@ -38,13 +38,34 @@ open class Rule {
     public let locationManager: CLLocationManager = CLLocationManager()
 
     
-    public init (ruleDict: NSDictionary) {
-        self.action = Action(actionDict: ruleDict["action"] as! NSDictionary)
-        self.enabled = ruleDict["enabled"] as! Bool
-        self.id = ruleDict["id"] as! String
-        self.geofence = Geofence(geofenceDict: ruleDict["geofence"] as! NSDictionary)
-        self.name = ruleDict["name"] as! String
-        self.trigger = Trigger(triggerDict: ruleDict["trigger"] as! NSDictionary)
+ public init (ruleDict: NSDictionary) {
+        if ruleDict != nil  {
+
+            if let action =  Action(actionDict: ruleDict["action"] **as?** NSDictionary){
+                self.action = action
+            }
+
+            if let enabled = ruleDict["enabled"] **as?**  Bool {
+                self.enabled = enabled
+            }
+
+            if let id = ruleDict["id"] **as?** String {
+                self.id = id
+            }
+
+            if let geofence = Geofence(geofenceDict: ruleDict["geofence"] **as?** NSDictionary) {
+                self.geofence = geofence
+            }
+
+            if let name = ruleDict["name"] **as?** String {
+                self.name = name
+            }
+
+            if let trigger = Trigger(triggerDict: ruleDict["trigger"] **as?** NSDictionary) {
+                self.trigger = trigger
+            }
+
+        }
     }
     
     open func initGeofence() {
