@@ -39,7 +39,7 @@ open class Rule {
 
     
     public init (ruleDict: NSDictionary) {
-        //self.action = Action(actionDict: ruleDict["action"] as! NSDictionary)
+        self.action = Action(actionDict: ruleDict["action"] as! NSDictionary)
         self.enabled = ruleDict["enabled"] as! Bool
         self.id = ruleDict["id"] as! String
         self.geofence = Geofence(geofenceDict: ruleDict["geofence"] as! NSDictionary)
