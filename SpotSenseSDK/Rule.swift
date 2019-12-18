@@ -39,12 +39,12 @@ open class Rule {
 
     
     public init (ruleDict: [String: Any]) {
-        self.action = Action(actionDict: ruleDict["action"] as! [String: Any])
+        self.action = Action(actionDict: ruleDict["action"] as! NSDictionary)
         self.enabled = ruleDict["enabled"] as! Bool
         self.id = ruleDict["id"] as! String
-        self.geofence = Geofence(geofenceDict: ruleDict["geofence"] as! [String: Any])
+        self.geofence = Geofence(geofenceDict: ruleDict["geofence"] as! NSDictionary)
         self.name = ruleDict["name"] as! String
-        self.trigger = Trigger(triggerDict: ruleDict["trigger"] as! [String: Any])
+        self.trigger = Trigger(triggerDict: ruleDict["trigger"] as! NSDictionary)
     }
     
     open func initGeofence() {
@@ -133,7 +133,7 @@ open class Trigger {
     public let time: Int
     public let triggerType: triggerType
     
-    public init (triggerDict: [String: Any]) { // time is 0 when not a dwell rule
+    public init (triggerDict: NSDictionary) { // time is 0 when not a dwell rule
         if let t = triggerDict["time"] as? Int {
             self.time = t
         } else {
@@ -167,8 +167,8 @@ open class Geofence {
         case polygon
     }
     
-    public init(geofenceDict: [String: Any]) {
-        let centerDict = geofenceDict["center"] as! [String: Any]
+    public init(geofenceDict: NSDictionary) {
+        let centerDict = geofenceDict["center"] as! NSDictionary
         
         let latStr = centerDict["lat"] as! String
         let lonStr = centerDict["lon"] as! String
@@ -202,7 +202,7 @@ open class Action {
     public var message:String?
     public var segueID:String?
 
-    public init(actionDict: [String: Any]) {
+    public init(actionDict: NSDictionary) {
         let actionTypeStr = actionDict["actionType"] as! String
         
         switch actionTypeStr {
@@ -226,26 +226,26 @@ open class NotifyResponse {
     public let triggered:Bool
     public let message:String
     public var action:Action?
-    public var httpResponse:[String: Any]?
+    public var httpResponse:NSDictionary?
     public var segueID:String?
     
-    public init(responseDict: [String: Any]) {
+    public init(responseDict: NSDictionary) {
         self.triggered = responseDict["triggered"] as! Bool
         self.message = responseDict["message"] as! String
         if (self.triggered) {
-            if let actionDict = responseDict["action"] as? [String: Any] {
+            if let actionDict = responseDict["action"] as? NSDictionary {
                 self.action = Action(actionDict: actionDict)
                 print("Type in constructor: \(self.getActionType())")
                 if (self.getActionType() == "segue") {
                     self.segueID = action?.segueID
                 }
-            } else if let httpResponseDict = responseDict["httpResponse"] as? [String: Any] {
+            } else if let httpResponseDict = responseDict["httpResponse"] as? NSDictionary {
                 self.httpResponse = httpResponseDict
             }
         }
     }
     
-    open func getHTTPResponse() -> [String: Any]? {
+    open func getHTTPResponse() -> NSDictionary? {
         return self.httpResponse
     }
     
