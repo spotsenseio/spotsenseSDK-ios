@@ -20,7 +20,7 @@
 //  Rule.Swift
 //  SpotSense Playground - Beta
 //
-//  Copyright © 2018 SpotSense (Sonora Data, LLC). All rights
+//  Copyright © 2020 SpotSense (SpotSense, LLC). All rights
 
 import Foundation
 import CoreLocation
@@ -38,17 +38,13 @@ open class Rule {
     public let locationManager: CLLocationManager = CLLocationManager()
 
     
-    public init (ruleDict: NSDictionary) {
-        if let actionDict = dict["action"] as? [String: Any] { 
-            self.action = Action(actionDict: actionDict)
-        } else { 
-            print("action is empty")
-        }
+    public init (ruleDict: [String: Any]) {
+        self.action = Action(actionDict: ruleDict["action"] as! [String: Any])
         self.enabled = ruleDict["enabled"] as! Bool
         self.id = ruleDict["id"] as! String
-        self.geofence = Geofence(geofenceDict: ruleDict["geofence"] as! NSDictionary)
+        self.geofence = Geofence(geofenceDict: ruleDict["geofence"] as! [String: Any])
         self.name = ruleDict["name"] as! String
-        self.trigger = Trigger(triggerDict: ruleDict["trigger"] as! NSDictionary)
+        self.trigger = Trigger(triggerDict: ruleDict["trigger"] as! [String: Any])
     }
     
     open func initGeofence() {
@@ -137,7 +133,7 @@ open class Trigger {
     public let time: Int
     public let triggerType: triggerType
     
-    public init (triggerDict: NSDictionary) { // time is 0 when not a dwell rule
+    public init (triggerDict: [String: Any]) { // time is 0 when not a dwell rule
         if let t = triggerDict["time"] as? Int {
             self.time = t
         } else {
@@ -171,8 +167,8 @@ open class Geofence {
         case polygon
     }
     
-    public init(geofenceDict: NSDictionary) {
-        let centerDict = geofenceDict["center"] as! NSDictionary
+    public init(geofenceDict: [String: Any]) {
+        let centerDict = geofenceDict["center"] as! [String: Any]
         
         let latStr = centerDict["lat"] as! String
         let lonStr = centerDict["lon"] as! String
@@ -206,7 +202,7 @@ open class Action {
     public var message:String?
     public var segueID:String?
 
-    public init(actionDict: NSDictionary) {
+    public init(actionDict: [String: Any]) {
         let actionTypeStr = actionDict["actionType"] as! String
         
         switch actionTypeStr {
@@ -230,26 +226,26 @@ open class NotifyResponse {
     public let triggered:Bool
     public let message:String
     public var action:Action?
-    public var httpResponse:NSDictionary?
+    public var httpResponse:[String: Any]?
     public var segueID:String?
     
-    public init(responseDict: NSDictionary) {
+    public init(responseDict: [String: Any]) {
         self.triggered = responseDict["triggered"] as! Bool
         self.message = responseDict["message"] as! String
         if (self.triggered) {
-            if let actionDict = responseDict["action"] as? NSDictionary {
+            if let actionDict = responseDict["action"] as? [String: Any] {
                 self.action = Action(actionDict: actionDict)
                 print("Type in constructor: \(self.getActionType())")
                 if (self.getActionType() == "segue") {
                     self.segueID = action?.segueID
                 }
-            } else if let httpResponseDict = responseDict["httpResponse"] as? NSDictionary {
+            } else if let httpResponseDict = responseDict["httpResponse"] as? [String: Any] {
                 self.httpResponse = httpResponseDict
             }
         }
     }
     
-    open func getHTTPResponse() -> NSDictionary? {
+    open func getHTTPResponse() -> [String: Any]? {
         return self.httpResponse
     }
     
