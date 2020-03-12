@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   s.swift_version = '4.2'
 
 
-  s.source       = { :git => "https://github.com/spotsenseio/spotsenseSDK-ios.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/spotsenseio/spotsenseSDK-ios.git", :tag => "{s.version}" }
 
 
 
