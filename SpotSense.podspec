@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SpotSense"
-  s.version      = "0.1.2"
+  s.version      = "0.1.3"
   s.summary      = "SpotSense is a web app and SDK for adding geofences to mobile apps"
 
   # This description is used to generate tags and improve search results.
@@ -85,6 +85,14 @@ Pod::Spec.new do |s|
   #  For header files it will include any header in the folder.
   #  Not including the public_header_files will make all headers public.
   #
+
+  s.source_files = 'SpotSenseSDK/SpotSenseSDK.h'
+  s.source_files = 'SpotSenseSDK/SpotSenseApp.swift'
+  s.source_files = 'SpotSenseSDK/SpotSense.swift'
+  s.source_files = 'SpotSenseSDK/Rule.swift'
+  s.source_files = 'SpotSenseSDK/Eddystone.swift'
+  s.source_files = 'SpotSenseSDK/DispatchTimer.swift'
+
 
   # s.source_files  = "Classes", "Classes/**/*.{h,m}"
   s.source_files  = "SpotSenseSDK/*.swift"
