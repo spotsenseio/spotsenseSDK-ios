@@ -23,11 +23,11 @@ Pod::Spec.new do |s|
   s.swift_version = '4.2'
 
 
-  s.source       = { :git => "https://github.com/spotsenseio/spotsenseSDK-ios.git", :tag => "1.0.1" }
+  s.source       = { :git => "https://github.com/spotsenseio/spotsenseSDK-ios.git", :tag => s.version }
 
 
 
-  s.source_files  = "SpotSenseSDK/*.{h,m,swift,plist}"
+  s.source_files  = "SpotSenseSDK/**/*.{h,m,swift,plist}"
 
 
 
