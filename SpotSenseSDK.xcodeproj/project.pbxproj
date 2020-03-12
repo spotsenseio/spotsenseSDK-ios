@@ -12,8 +12,6 @@
 		32431707215628DE00ABDA34 /* SpotSense.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32431705215628DE00ABDA34 /* SpotSense.swift */; };
 		3243170921562B1200ABDA34 /* SpotSenseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3243170821562B1200ABDA34 /* SpotSenseApp.swift */; };
 		3243170F215869F500ABDA34 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 3243170E215869F500ABDA34 /* LICENSE */; };
-		6C53FFCA241A1534005D9D11 /* DispatchTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C53FFC8241A1534005D9D11 /* DispatchTimer.swift */; };
-		6C53FFCB241A1534005D9D11 /* Eddystone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C53FFC9241A1534005D9D11 /* Eddystone.swift */; };
 		BB3927275612E2C812047A9D /* Pods_SpotSenseSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A6B3B05DC161F005FB275DA /* Pods_SpotSenseSDK.framework */; };
 /* End PBXBuildFile section */
 
@@ -26,8 +24,6 @@
 		32431705215628DE00ABDA34 /* SpotSense.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotSense.swift; sourceTree = "<group>"; };
 		3243170821562B1200ABDA34 /* SpotSenseApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotSenseApp.swift; sourceTree = "<group>"; };
 		3243170E215869F500ABDA34 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		6C53FFC8241A1534005D9D11 /* DispatchTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchTimer.swift; sourceTree = "<group>"; };
-		6C53FFC9241A1534005D9D11 /* Eddystone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Eddystone.swift; sourceTree = "<group>"; };
 		9A6B3B05DC161F005FB275DA /* Pods_SpotSenseSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpotSenseSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0A7B23F0697F845E9522353 /* Pods-SpotSenseSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotSenseSDK.release.xcconfig"; path = "Pods/Target Support Files/Pods-SpotSenseSDK/Pods-SpotSenseSDK.release.xcconfig"; sourceTree = "<group>"; };
 		F53588DBAD72D68E85DEABA7 /* Pods-SpotSenseSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotSenseSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpotSenseSDK/Pods-SpotSenseSDK.debug.xcconfig"; sourceTree = "<group>"; };
@@ -77,8 +73,6 @@
 		324316FB2156264900ABDA34 /* SpotSenseSDK */ = {
 			isa = PBXGroup;
 			children = (
-				6C53FFC8241A1534005D9D11 /* DispatchTimer.swift */,
-				6C53FFC9241A1534005D9D11 /* Eddystone.swift */,
 				324316FC2156264900ABDA34 /* SpotSenseSDK.h */,
 				32431704215628DE00ABDA34 /* Rule.swift */,
 				3243170821562B1200ABDA34 /* SpotSenseApp.swift */,
@@ -198,8 +192,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C53FFCA241A1534005D9D11 /* DispatchTimer.swift in Sources */,
-				6C53FFCB241A1534005D9D11 /* Eddystone.swift in Sources */,
 				3243170921562B1200ABDA34 /* SpotSenseApp.swift in Sources */,
 				32431707215628DE00ABDA34 /* SpotSense.swift in Sources */,
 				32431706215628DE00ABDA34 /* Rule.swift in Sources */,
