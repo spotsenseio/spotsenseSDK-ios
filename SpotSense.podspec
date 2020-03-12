@@ -25,9 +25,15 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/spotsenseio/spotsenseSDK-ios.git", :tag => s.version }
 
+	
+  s.source_files  = "SpotSenseSDK/DispatchTimer.swift"
+  s.source_files  = "SpotSenseSDK/Eddystone.swift"
+  s.source_files  = "SpotSenseSDK/Rule.swift"
+  s.source_files  = "SpotSenseSDK/SpotSense.swift"
+  s.source_files  = "SpotSenseSDK/SpotSenseApp.swift"
+  s.source_files  = "SpotSenseSDK/SpotSenseSDK.h"
+  s.source_files  = "SpotSenseSDK/Info.plist"
 
-
-  s.source_files  = "SpotSenseSDK/*.{h,swift,plist}"
   s.exclude_files = "Classes/Exclude"
 
 
