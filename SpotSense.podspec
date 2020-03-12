@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SpotSense"
-  s.version      = "1.0.0"
+  s.version      = "0.1.2"
   s.summary      = "SpotSense is a web app and SDK for adding geofences to mobile apps"
 
   # This description is used to generate tags and improve search results.
