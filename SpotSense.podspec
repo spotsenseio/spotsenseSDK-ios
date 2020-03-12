@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
 
 
 
-  s.source_files  = "SpotSenseSDK/*.{h,m,swift,plist}"
+  s.source_files  = "SpotSenseSDK/*.{h,swift,plist}"
   s.exclude_files = "Classes/Exclude"
 
 
