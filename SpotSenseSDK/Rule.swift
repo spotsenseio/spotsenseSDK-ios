@@ -60,7 +60,7 @@ open class Rule {
                 let content = UNMutableNotificationContent()
                 content.title = self.name
                 content.body = "Inner SDK notification"
-                content.sound = UNNotificationSound.default()
+            content.sound = UNNotificationSound.default
 
                 let center = self.geofence.center
                 let region = CLCircularRegion(center: center, radius: self.geofence.radiusSize, identifier: self.id)

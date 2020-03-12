@@ -185,19 +185,26 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
         ]
         //https://spotsense.auth0.com/api/v2/
         //https://api.spotsense.io/beta
-        Alamofire.request("\(auth0URL)", method: .post, parameters: tokenParameters, encoding: JSONEncoding.default, headers: tokenHeaders)
+                
+        AF.request("\(auth0URL)", method: .post, parameters: tokenParameters, encoding: JSONEncoding.default, headers: tokenHeaders)
             .responseJSON { response in
-                if let result = response.result.value {
-                    let JSON = result as! NSDictionary
+                
+                switch response.result {
+                case .success(let value):
+                    
+                    let JSON = value as! NSDictionary
                     
                     if let token = JSON["access_token"] {
                         completion((token as! String), nil)
                     } else {
                         completion(nil, "Unable to get access_token")
                     }
-                } else {
+
+                case .failure(let error):
+                    print(error)
                     completion(nil, "Alamofire error")
                 }
+               
         }
     }
     
@@ -247,10 +254,10 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
             "customID": "Waddup from the SDK Playground"
         ]
 
-        Alamofire.request("\(spotsenseURL)/\(self.clientID)/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: header).responseJSON { response in
+        AF.request("\(spotsenseURL)/\(self.clientID)/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: header).responseJSON { response in
             switch response.result {
             case .success( _):
-                print("User Response: \(String(describing: response.result.value))")
+                print("User Response: \(String(describing: response.result))")
                 completion()
             case .failure(let error):
                 print("\n Failure: \(error.localizedDescription)")
@@ -268,11 +275,13 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
         
         let expectedUserID = "\(self.clientID)-\(self.deviceID)"
     
-        Alamofire.request("\(spotsenseURL)/\(self.clientID)/users/\(expectedUserID)", method: .get, parameters: nil, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
+        AF.request("\(spotsenseURL)/\(self.clientID)/users/\(expectedUserID)", method: .get, parameters: nil, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
+            
+          
             switch response.result {
                 
-            case .success( _):
-                if let res = response.result.value as? NSDictionary {
+            case .success(let value):
+                if let res = value as? NSDictionary {
                     if res["errorMessage"] != nil { // need to test
                         completion(false)
                     } else {
@@ -336,10 +345,10 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
             "Authorization": "Bearer \(self.token!)"
         ]
         
-        Alamofire.request("\(spotsenseURL)/apps/\(self.clientID)", parameters: nil, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
+        AF.request("\(spotsenseURL)/apps/\(self.clientID)", parameters: nil, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
             switch response.result {
-                case .success( _):
-                    if let app = response.result.value as? NSDictionary {
+                case .success(let value):
+                    if let app = value as? NSDictionary {
                         if let name = app["name"] {
                             print ("Name: \(name)")
                             let appRes = SpotSenseApp(appID: self.clientID, appName: name as! String)
@@ -366,10 +375,10 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
                         "Authorization": "Bearer \(self.token!)"
                     ]
                     
-                    Alamofire.request("\(self.spotsenseURL)/\(self.clientID)/rules", parameters: nil, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
+                    AF.request("\(self.spotsenseURL)/\(self.clientID)/rules", parameters: nil, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
                         switch response.result {
-                            case .success( _):
-                                if let res = response.result.value as? NSDictionary {
+                            case .success(let value):
+                                if let res = value as? NSDictionary {
                                     if let rules = res["rules"] as? NSArray {
                                         // clear out previously scheduled notifications as they tend to get improperly cached
                                         self.notificationCenter.removeAllPendingNotificationRequests()
@@ -409,10 +418,10 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
                 "Authorization": "Bearer \(self.token!)"
             ]
             
-            Alamofire.request("\(self.spotsenseURL)/\(self.clientID)/beaconRules", parameters: nil, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
+            AF.request("\(self.spotsenseURL)/\(self.clientID)/beaconRules", parameters: nil, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
                 switch response.result {
-                    case .success( _):
-                        if let res = response.result.value as? NSDictionary {
+                    case .success(let value):
+                        if let res = value as? NSDictionary {
                             if let beacons = res["beaconRules"] as? NSArray {
                                 // clear out previously scheduled notifications as they tend to get improperly cached
                                 self.notificationCenter.removeAllPendingNotificationRequests()
@@ -498,7 +507,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
             self.fireNotification(notificationText: "Did Arrive: \(region.identifier) region.", didEnter: true)
             //self.localNotification(notificationText: "Did Arrive: \(region.identifier) region.", didEnter: true)
 
-            Alamofire.request("\(self.spotsenseURL)/\(self.clientID)/rules/\(ruleID)/enter", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
+            AF.request("\(self.spotsenseURL)/\(self.clientID)/rules/\(ruleID)/enter", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
                 switch response.result {
                 case .success(let data):
                     if data is NSDictionary {
@@ -517,7 +526,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
             self.fireNotification(notificationText: "Did Exit: \(region.identifier) region", didEnter: false)
             //self.localNotification(notificationText: "Did Exit: \(region.identifier) region", didEnter: false)
 
-            Alamofire.request("\(self.spotsenseURL)/\(self.clientID)/rules/\(ruleID)/exit", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
+            AF.request("\(self.spotsenseURL)/\(self.clientID)/rules/\(ruleID)/exit", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
                 switch response.result {
                 case .success(let data):
                     if data is NSDictionary {
@@ -557,7 +566,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
             
             self.fireNotification(notificationText: "Did Arrive: \(ruleID) Beacon.", didEnter: true)
 
-            Alamofire.request("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/enter", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
+            AF.request("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/enter", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
                 switch response.result {
                     
                 case .success(let data):
@@ -598,7 +607,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
             
             self.fireNotification(notificationText: "Did Exit: \(ruleID) beacon", didEnter: false)
 
-            Alamofire.request("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/exit", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
+            AF.request("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/exit", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
                 switch response.result {
                 case .success(let data):
                     if data is NSDictionary {
@@ -637,7 +646,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
                 let content = UNMutableNotificationContent()
                 content.title = didEnter ? "Entered Region" : "Exited Region"
                 content.body = notificationText
-                content.sound = UNNotificationSound.default()
+                content.sound = UNNotificationSound.default
                 
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
                 
