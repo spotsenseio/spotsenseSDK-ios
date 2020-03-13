@@ -63,7 +63,7 @@ public extension JWT {
 
      - returns: a claim of the JWT
      */
-    func claim(name: String) -> Claim {
+    public func claim(name: String) -> Claim {
         let value = self.body[name]
         return Claim(value: value)
     }
