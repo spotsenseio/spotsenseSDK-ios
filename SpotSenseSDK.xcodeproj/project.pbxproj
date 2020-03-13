@@ -14,6 +14,7 @@
 		3243170F215869F500ABDA34 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 3243170E215869F500ABDA34 /* LICENSE */; };
 		6C53FFCE241A2DD2005D9D11 /* Eddystone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C53FFCC241A2DD2005D9D11 /* Eddystone.swift */; };
 		6C53FFCF241A2DD2005D9D11 /* DispatchTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C53FFCD241A2DD2005D9D11 /* DispatchTimer.swift */; };
+		6C9CE4EE241B693800DA7968 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 324316FD2156264900ABDA34 /* Info.plist */; };
 		BB3927275612E2C812047A9D /* Pods_SpotSenseSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A6B3B05DC161F005FB275DA /* Pods_SpotSenseSDK.framework */; };
 /* End PBXBuildFile section */
 
@@ -172,6 +173,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C9CE4EE241B693800DA7968 /* Info.plist in Resources */,
 				3243170F215869F500ABDA34 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
