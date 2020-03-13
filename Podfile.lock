@@ -1,24 +1,24 @@
 PODS:
-  - Alamofire (4.7.2)
+  - Alamofire (5.0.2)
   - AsyncSwift (2.0.4)
-  - JWTDecode (2.1.1)
+  - JWTDecode (2.4.1)
 
 DEPENDENCIES:
-  - Alamofire (~> 4.7)
+  - Alamofire
   - AsyncSwift
   - JWTDecode (~> 2.1)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - Alamofire
     - AsyncSwift
     - JWTDecode
 
 SPEC CHECKSUMS:
-  Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
+  Alamofire: 3ba7a4db18b4f62c4a1c0e1cb39d7f3d52e10ada
   AsyncSwift: 65775a7b32e740609b24969ece3de58723b9dc3e
-  JWTDecode: 83e8b381aafe27158d9f692cbdca2b12d61d460c
+  JWTDecode: 4bd4da0cdf0f8154fd467fa48499f34ec057fb88
 
-PODFILE CHECKSUM: 9cdef01c0b4fdd96d9d85677e012f9541e9b4083
+PODFILE CHECKSUM: 9552bfdf7c4df4d2f7cba3bd47cc1d0b0cf67f7f
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.9.1
