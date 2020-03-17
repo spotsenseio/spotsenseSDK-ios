@@ -14,6 +14,7 @@
 		3243170F215869F500ABDA34 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 3243170E215869F500ABDA34 /* LICENSE */; };
 		6C53FFCE241A2DD2005D9D11 /* Eddystone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C53FFCC241A2DD2005D9D11 /* Eddystone.swift */; };
 		6C53FFCF241A2DD2005D9D11 /* DispatchTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C53FFCD241A2DD2005D9D11 /* DispatchTimer.swift */; };
+		6C9CE4F2241B7A8800DA7968 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6C9CE4F1241B7A8800DA7968 /* Info.plist */; };
 		BB3927275612E2C812047A9D /* Pods_SpotSenseSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A6B3B05DC161F005FB275DA /* Pods_SpotSenseSDK.framework */; };
 /* End PBXBuildFile section */
 
@@ -21,7 +22,6 @@
 		32280F082158884C00D8093B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		324316F92156264900ABDA34 /* SpotSenseSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpotSenseSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		324316FC2156264900ABDA34 /* SpotSenseSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpotSenseSDK.h; sourceTree = "<group>"; };
-		324316FD2156264900ABDA34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		32431704215628DE00ABDA34 /* Rule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rule.swift; sourceTree = "<group>"; };
 		32431705215628DE00ABDA34 /* SpotSense.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotSense.swift; sourceTree = "<group>"; };
 		3243170821562B1200ABDA34 /* SpotSenseApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotSenseApp.swift; sourceTree = "<group>"; };
@@ -31,6 +31,7 @@
 		6C53FFD0241A322D005D9D11 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C53FFD2241A322D005D9D11 /* Async.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Async.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C53FFD4241A322D005D9D11 /* JWTDecode.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JWTDecode.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6C9CE4F1241B7A8800DA7968 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9A6B3B05DC161F005FB275DA /* Pods_SpotSenseSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpotSenseSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0A7B23F0697F845E9522353 /* Pods-SpotSenseSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotSenseSDK.release.xcconfig"; path = "Pods/Target Support Files/Pods-SpotSenseSDK/Pods-SpotSenseSDK.release.xcconfig"; sourceTree = "<group>"; };
 		F53588DBAD72D68E85DEABA7 /* Pods-SpotSenseSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotSenseSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpotSenseSDK/Pods-SpotSenseSDK.debug.xcconfig"; sourceTree = "<group>"; };
@@ -86,7 +87,7 @@
 				32431704215628DE00ABDA34 /* Rule.swift */,
 				3243170821562B1200ABDA34 /* SpotSenseApp.swift */,
 				32431705215628DE00ABDA34 /* SpotSense.swift */,
-				324316FD2156264900ABDA34 /* Info.plist */,
+				6C9CE4F1241B7A8800DA7968 /* Info.plist */,
 			);
 			path = SpotSenseSDK;
 			sourceTree = "<group>";
@@ -172,6 +173,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C9CE4F2241B7A8800DA7968 /* Info.plist in Resources */,
 				3243170F215869F500ABDA34 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
