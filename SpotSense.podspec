@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   s.social_media_url = "https://twitter.com/spotsenseio"
 
   s.platform     = :ios, "10.0"
-  s.swift_version = '4.0'
+  s.swift_version = '4.2'
 
 
   s.source       = { :git => "https://github.com/spotsenseio/spotsenseSDK-ios.git", :tag => "#{s.version}" }
