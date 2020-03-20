@@ -1,6 +1,6 @@
 #  SpotSense SDK
 ## Requirements
-* iOS 10+
+* iOS 11+
 * Swift 4.2+
 
 ## Getting Started
