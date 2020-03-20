@@ -566,7 +566,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
                 let content = UNMutableNotificationContent()
                 content.title = didEnter ? "Entered Region" : "Exited Region"
                 content.body = notificationText
-                content.sound = UNNotificationSound.default()
+                content.sound = UNNotificationSound.default
                 
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
                 
