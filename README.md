@@ -110,8 +110,19 @@ override func viewDidLoad() {
  }
   
 ```
-4. Select your new app and create a rule in the SpotSense Dashboard
-5. Test your rule out in the real world or in the iOS Simulator!
+## Remember to ask for your users location and bluetooth permissions by adding;
+
+NSLocationAlwaysAndWhenInUseUsageDescription
+NSLocationWhenInUseUsageDescription
+NSBluetoothAlwaysUsageDescription
+
+and explainations to your info.plist e.g $(PRODUCT_NAME) Uses bluetooth to trigger games at certain locations
+
+---
+
+5. Select your new app and create a geofence or beacon in the SpotSense Dashboard
+
+6. Test your proximity event out in the real world or in the iOS Simulator!
 
 Have a question or got stuck? Let us know in the SpotSense Slack Community or shoot us an email (help@spotsense.io). We are happy to help!
 
