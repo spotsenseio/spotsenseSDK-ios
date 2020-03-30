@@ -456,7 +456,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
         if state == .inside { // equivalent to an enter
             print("Notify enter for region: \(region.identifier)")
             
-            self.fireNotification(notificationText: "Did Arrive: \(region.identifier) region.", didEnter: true)
+           // self.fireNotification(notificationText: "Did Arrive: \(region.identifier) region.", didEnter: true)
 
             Alamofire.request("\(self.spotsenseURL)/\(self.clientID)/rules/\(ruleID)/enter", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
                 switch response.result {
@@ -471,7 +471,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
             print("Notify exit for region: \(region.identifier)")
             
             
-            self.fireNotification(notificationText: "Did Exit: \(region.identifier) region", didEnter: false)
+           // self.fireNotification(notificationText: "Did Exit: \(region.identifier) region", didEnter: false)
             //self.localNotification(notificationText: "Did Exit: \(region.identifier) region", didEnter: false)
 
             Alamofire.request("\(self.spotsenseURL)/\(self.clientID)/rules/\(ruleID)/exit", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
@@ -504,7 +504,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
         
         print("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/enter")
                     
-            self.fireNotification(notificationText: "Did Arrive: \(ruleID) Beacon.", didEnter: true)
+           // self.fireNotification(notificationText: "Did Arrive: \(ruleID) Beacon.", didEnter: true)
 
             Alamofire.request("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/enter", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
                 switch response.result {
@@ -542,7 +542,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
         
             print("Notify exit for beacon: \(ruleID)")
                         
-            self.fireNotification(notificationText: "Did Exit: \(ruleID) beacon", didEnter: false)
+          //  self.fireNotification(notificationText: "Did Exit: \(ruleID) beacon", didEnter: false)
 
             Alamofire.request("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/exit", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
                 switch response.result {
