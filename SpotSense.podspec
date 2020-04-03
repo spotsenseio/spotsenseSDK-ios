@@ -33,8 +33,8 @@ Pod::Spec.new do |s|
   s.exclude_files = "Classes/Exclude"
 
 
-  s.dependency 'Alamofire'
-  s.dependency 'JWTDecode'
+  s.dependency 'Alamofire' '~> 4.8.0'
+  s.dependency 'JWTDecode' '~> 2.1'
 
 
 end
