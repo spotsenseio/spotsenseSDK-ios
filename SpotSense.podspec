@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
 
  
   s.name         = "SpotSense"
-  s.version      = "1.0.2"
+  s.version      = "1.0.1"
   s.summary      = "SpotSense is a web app and SDK for adding geofences to mobile apps"
 
 
@@ -33,8 +33,7 @@ Pod::Spec.new do |s|
   s.exclude_files = "Classes/Exclude"
 
 
-  s.dependency 'Alamofire' '~> 4.8.0'
-  s.dependency 'JWTDecode' '~> 2.1'
-
+  s.dependency 'Alamofire'
+  s.dependency 'JWTDecode'
 
 end

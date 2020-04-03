@@ -6,7 +6,7 @@ target 'SpotSenseSDK' do
   use_frameworks!
 
   # Pods for SpotSenseSDK
-  pod 'Alamofire', '~> 4.8.0'
-  pod 'JWTDecode', '~> 2.1'
+  pod 'Alamofire'
+  pod 'JWTDecode'
   pod 'AsyncSwift'
 end
