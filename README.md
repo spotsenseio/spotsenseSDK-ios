@@ -21,7 +21,7 @@
     ```
     target 'your-app' do
         # Pods for your-app
-        pod 'SpotSense', '~>1.0.1'
+                pod 'SpotSense', :git => 'https://github.com/spotsenseio/spotsenseSDK-ios.git', :commit => '8985ba7'
     end
     ```
 
