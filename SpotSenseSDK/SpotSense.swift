@@ -450,6 +450,33 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
 
     /* Broadcaster */
 
+        open func handleLocationUpdate(location: CLLocation) {
+        
+        self.getToken {
+                  let tokenHeaders: HTTPHeaders = [
+                             "content-type": "application/json",
+                             "Authorization": "Bearer \(self.token!)"
+                         ]
+               
+        let parameters: Parameters = [
+            "userID": "\(self.clientID)-\(self.deviceID)"
+        ]
+        
+        // print("\(self.spotsenseURL)/\(self.clientID)/rules/\(ruleID)/enter")
+
+            AF.request("\(self.spotsenseURL)/\(self.clientID)/locations/", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
+                switch response.result {
+                case .success(let data):
+                    if data is NSDictionary {
+                    print("\n Updated Location)")
+                    }
+                case .failure(let error):
+                    print("\n Failure: \(error.localizedDescription)")
+                }
+            }
+        }
+      }
+
     open func handleUserLocationUpdate(location: CLLocation) {
       self.getToken {
                   let tokenHeaders: HTTPHeaders = [
