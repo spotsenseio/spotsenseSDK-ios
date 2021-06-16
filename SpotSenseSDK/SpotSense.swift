@@ -508,6 +508,32 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
         }
       }
     
+    open func handleLocationUpdate(location: CLLocation) {
+        
+        self.getToken {
+                  let tokenHeaders: HTTPHeaders = [
+                             "content-type": "application/json",
+                             "Authorization": "Bearer \(self.token!)"
+                         ]
+               
+        let parameters: Parameters = [
+            "deviceID": "\(self.deviceID)",
+            "location": "\(location)"
+        ]
+        
+
+            AF.request("\(self.spotsenseURL)/\(self.clientID)/locations", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
+                switch response.result {
+                case .success(let data):
+                    if data is NSDictionary {
+                    }
+                case .failure(let error):
+                    print("\n Failure: \(error.localizedDescription)")
+                }
+            }
+        }
+      }
+    
     open func handleBeaconEnterState(beaconScanner: SpotSense, beaconInfo: BeaconInfo ,data: NSDictionary) {
       
         let ruleID = data["id"] as! String
