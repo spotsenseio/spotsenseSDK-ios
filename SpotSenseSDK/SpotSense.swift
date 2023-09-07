@@ -33,7 +33,6 @@
 
 import Foundation
 import Dispatch
-import Alamofire
 import JWTDecode
 import CoreLocation
 import UserNotifications
@@ -78,6 +77,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
 
     public var seenEddystoneCache = [String : [String : AnyObject]]()
     public var deviceIDCache = [UUID : NSData]()
+    private let networkManager = NetworkManager.shared
 
     
     public init(clientID: String, clientSecret: String) { // init this spotsense instant
@@ -170,37 +170,21 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
     }
     
     private func fetchToken (completion: @escaping (String?, String?) -> ()) -> Void {
-        let auth0URL = "https://spotsense.auth0.com/oauth/token"
-        let tokenHeaders: HTTPHeaders = [
-            "content-type": "application/json"
-        ]
-        
         let tokenParameters: Parameters = [
             "client_id": clientID,
             "client_secret": clientSecret,
             "audience": "https://api.spotsense.io/beta",
             "grant_type":"client_credentials"
         ]
-                
-        AF.request("\(auth0URL)", method: .post, parameters: tokenParameters, encoding: JSONEncoding.default, headers: tokenHeaders)
-            .responseJSON { response in
-                
-                switch response.result {
-                case .success(let value):
-                    
-                    let JSON = value as! NSDictionary
-                    
-                    if let token = JSON["access_token"] {
-                        completion((token as! String), nil)
-                    } else {
-                        completion(nil, "Unable to get access_token")
-                    }
-
-                case .failure(let error):
-                    print(error)
-                    completion(nil, "Alamofire error")
-                }
-               
+        
+        networkManager.getToken(param: tokenParameters) { jsonResponse in
+            if let token = jsonResponse["access_token"] as? String {
+                completion((token), nil)
+            } else {
+                completion(nil, "Unable to get access_token")
+            }
+        } errorHandler: { error in
+            completion(nil, "Network error")
         }
     }
     
@@ -240,58 +224,25 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
         // create a user with the ID
         let id = self.deviceID;
         // do the logic for creating a new user
-        let header: HTTPHeaders = [
-            "content-type": "application/json",
-            "Authorization": "Bearer \(self.token!)"
-        ]
-        
         let parameters: Parameters = [
             "deviceID": id,
             "customID": "Waddup from the SDK Playground"
         ]
-
-        AF.request("\(spotsenseURL)/\(self.clientID)/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: header).responseJSON { response in
-            switch response.result {
-            case .success( _):
-                print("User Response: \(String(describing: response.result))")
-                completion()
-            case .failure(let error):
-                print("\n Failure: \(error.localizedDescription)")
-                completion()
-            }
+        
+        networkManager.createUser(param: parameters,
+                                         clientID: self.clientID,
+                                         completion: completion) { error in
         }
     }
     
     private func userExists(completion: @escaping (Bool) -> Void) {
         // call out to get user by id
-        let tokenHeaders: HTTPHeaders = [
-            "content-type": "application/json",
-            "Authorization": "Bearer \(self.token!)"
-        ]
-        
         let expectedUserID = "\(self.clientID)-\(self.deviceID)"
-    
-        AF.request("\(spotsenseURL)/\(self.clientID)/users/\(expectedUserID)", method: .get, parameters: nil, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
+        
+        networkManager.userExists(clientID: self.clientID,
+                                  userID: expectedUserID,
+                                  completion: completion) { error in
             
-          
-            switch response.result {
-                
-            case .success(let value):
-                if let res = value as? NSDictionary {
-                    if res["errorMessage"] != nil { // need to test
-                        completion(false)
-                    } else {
-                        completion(true)
-                    }
-                } else {
-                    print("Error converting to JSON")
-                    completion(false)
-                }
-
-            case .failure(let error):
-                print("\n Failure: \(error.localizedDescription)")
-                completion(false)
-            }
         }
     }
     
@@ -306,11 +257,8 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
     }
     
     open func canNotify() -> Bool {
-        if let enabled = self.notificationsEnabled {
-            if enabled {
-                return true
-            }
-            return false
+        if let enabled = self.notificationsEnabled, enabled {
+            return true
         } else {
             return false
         }
@@ -336,114 +284,71 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
     open func getAppInfo(completion: @escaping (SpotSenseApp?) -> Void) {
         // gets app info from SpotSense API and returns it as an object
         
-        let tokenHeaders: HTTPHeaders = [
-            "content-type": "application/json",
-            "Authorization": "Bearer \(self.token!)"
-        ]
-        
-        AF.request("\(spotsenseURL)/apps/\(self.clientID)", parameters: nil, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
-            switch response.result {
-                case .success(let value):
-                    if let app = value as? NSDictionary {
-                        if let name = app["name"] {
-                            print ("Name: \(name)")
-                            let appRes = SpotSenseApp(appID: self.clientID, appName: name as! String)
-                            completion(appRes)
-                        } else {
-                            print("Couldn't get name from JSON object")
-                            completion(nil)
+        networkManager.getAppInfo(clientId: self.clientID) { name in
+            if let name = name {
+                let appRes = SpotSenseApp(appID: self.clientID, appName: name)
+                completion(appRes)
+            } else {
+                print("Couldn't get name from JSON object")
+                completion(nil)
+            }
+        } errorHandler: { error in
+            
+        }
+    }
+    
+    open func getRules(completion: @escaping () -> ()) {
+        self.getToken {
+            self.networkManager.getRules(clientID: self.clientID) { jsonResponse in
+                if let rules = jsonResponse["rules"] as? NSArray {
+                    // clear out previously scheduled notifications as they tend to get improperly cached
+                    self.notificationCenter.removeAllPendingNotificationRequests()
+                    
+                    for ruleAny in rules {
+                        if let ruleDict = ruleAny as? NSDictionary { // get the individual rule object
+                            let rule = Rule(ruleDict: ruleDict )
+                            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+                            if rule.enabled {
+                                print("\(rule.id) is enabled")
+                                rule.initGeofence() // create listener for region
+                                rule.scheduleNotification() // schedule notification, does nothing if actionType !== 'notification'
+                                self.rules.append(rule) // add to array to keep track
+                            }
                         }
-                    } else {
-                        print("Error converting to JSON")
-                        completion(nil)
                     }
-                case .failure(let error):
-                    print("\n Failure: \(error.localizedDescription)")
-                    completion(nil)
+                } else {
+                    print("unable to convert to nsarray")
+                }
+                completion()
+            } errorHandler: { error in
+                completion()
             }
         }
     }
-
-            open func getRules(completion: @escaping () -> ()) {
-                self.getToken {
-                    let tokenHeaders: HTTPHeaders = [
-                        "content-type": "application/json",
-                        "Authorization": "Bearer \(self.token!)"
-                    ]
-                    
-                    AF.request("\(self.spotsenseURL)/\(self.clientID)/rules", parameters: nil, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
-                        switch response.result {
-                            case .success(let value):
-                                if let res = value as? NSDictionary {
-                                    if let rules = res["rules"] as? NSArray {
-                                        // clear out previously scheduled notifications as they tend to get improperly cached
-                                        self.notificationCenter.removeAllPendingNotificationRequests()
-                                        
-                                        for ruleAny in rules {
-                                            if let ruleDict = ruleAny as? NSDictionary { // get the individual rule object
-                                                let rule = Rule(ruleDict: ruleDict )
-                                                UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-                                                if rule.enabled {
-                                                    print("\(rule.id) is enabled")
-                                                    rule.initGeofence() // create listener for region
-                                                    rule.scheduleNotification() // schedule notification, does nothing if actionType !== 'notification'
-                                                    self.rules.append(rule) // add to array to keep track
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        print("unable to convert to nsarray")
-                                    }
-                                    completion()
-                                } else {
-                                    print("Error converting to JSON")
-                                    completion()
-                                }
-                            case .failure(let error):
-                                print("\n Failure: \(error.localizedDescription)")
-                                completion()
-                        }
-                    }
-                }
-            }
     
     open func getBeacons(completion: @escaping () -> ()) {
         self.getToken {
-            let tokenHeaders: HTTPHeaders = [
-                "content-type": "application/json",
-                "Authorization": "Bearer \(self.token!)"
-            ]
-            
-            AF.request("\(self.spotsenseURL)/\(self.clientID)/beaconRules", parameters: nil, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
-                switch response.result {
-                    case .success(let value):
-                        if let res = value as? NSDictionary {
-                            if let beacons = res["beaconRules"] as? NSArray {
-                                // clear out previously scheduled notifications as they tend to get improperly cached
-                                self.notificationCenter.removeAllPendingNotificationRequests()
-                                
-                                for beconAny in beacons {
-                                    if let beconDict = beconAny as? NSDictionary { // get the individual rule object
-                                       // let becon = Rule(ruleDict: beconDict )
-                                        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-                                            self.beacons.append(beconDict) // add to array to keep track
-                                    }
-                                }
-                                
-                                self.startScanning()
-
-                            } else {
-                                print("unable to convert to nsarray")
-                            }
-                            completion()
-                        } else {
-                            print("Error converting to JSON")
-                            completion()
+            self.networkManager.getBeacons(clientID: self.clientID) { jsonResponse in
+                if let beacons = jsonResponse["beaconRules"] as? NSArray {
+                    // clear out previously scheduled notifications as they tend to get improperly cached
+                    self.notificationCenter.removeAllPendingNotificationRequests()
+                    
+                    for beconAny in beacons {
+                        if let beconDict = beconAny as? NSDictionary { // get the individual rule object
+                            // let becon = Rule(ruleDict: beconDict )
+                            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+                            self.beacons.append(beconDict) // add to array to keep track
                         }
-                    case .failure(let error):
-                        print("\n Failure: \(error.localizedDescription)")
-                        completion()
+                    }
+                    
+                    self.startScanning()
+                    
+                } else {
+                    print("unable to convert to nsarray")
                 }
+                completion()
+            } errorHandler: { error in
+                completion()
             }
         }
     }
@@ -453,166 +358,125 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
         let ruleID = region.identifier
         
         self.getToken {
-                  let tokenHeaders: HTTPHeaders = [
-                             "content-type": "application/json",
-                             "Authorization": "Bearer \(self.token!)"
-                         ]
-               
-        let parameters: Parameters = [
-            "userID": "\(self.clientID)-\(self.deviceID)"
-        ]
-        
-        print(parameters)
-        
-        print("\(self.spotsenseURL)/\(self.clientID)/rules/\(ruleID)/enter")
-        
-        if state == .inside { // equivalent to an enter
-            print("Notify enter for region: \(region.identifier)")
             
-            let logg = Logger()
-            logg.log(" Enter : \(region.identifier)")
+            let parameters: Parameters = [
+                "userID": "\(self.clientID)-\(self.deviceID)"
+            ]
             
-           // self.fireNotification(notificationText: "Did Arrive: \(region.identifier) region.", didEnter: true)
-            //self.localNotification(notificationText: "Did Arrive: \(region.identifier) region.", didEnter: true)
-
-            AF.request("\(self.spotsenseURL)/\(self.clientID)/rules/\(ruleID)/enter", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
-                switch response.result {
-                case .success(let data):
-                    if data is NSDictionary {
-                       // self.handleNotifyResponse(response: obj, ruleID: ruleID)
-                    }
-                case .failure(let error):
-                    print("\n Failure: \(error.localizedDescription)")
+            print(parameters)
+            
+            print("\(self.spotsenseURL)/\(self.clientID)/rules/\(ruleID)/enter")
+            
+            if state == .inside { // equivalent to an enter
+                print("Notify enter for region: \(region.identifier)")
+                
+                let logg = Logger()
+                logg.log(" Enter : \(region.identifier)")
+                
+                // self.fireNotification(notificationText: "Did Arrive: \(region.identifier) region.", didEnter: true)
+                //self.localNotification(notificationText: "Did Arrive: \(region.identifier) region.", didEnter: true)
+                
+                self.networkManager.regionStateEnter(clientID: self.clientID,
+                                                     ruleID: ruleID,
+                                                     param: parameters) { jsonResponse in
+                    // self.handleNotifyResponse(response: obj, ruleID: ruleID)
+                } errorHandler: { error in
+                    print("\n Failure: \(error ?? "")")
+                }
+            } else if state == .outside {
+                print("Notify exit for region: \(region.identifier)")
+                
+                let logg = Logger()
+                logg.log(" Exit :  \(region.identifier)")
+                
+                // self.fireNotification(notificationText: "Did Exit: \(region.identifier) region", didEnter: false)
+                //self.localNotification(notificationText: "Did Exit: \(region.identifier) region", didEnter: false)
+                
+                self.networkManager.regionStateExist(clientID: self.clientID, ruleID: ruleID, param: parameters) { jsonResponse in
+                    //self.handleNotifyResponse(response: obj, ruleID: ruleID)
+                } errorHandler: { error in
+                    print("\n Failure: \(error ?? "")")
                 }
             }
-        } else if state == .outside {
-            print("Notify exit for region: \(region.identifier)")
-            
-            let logg = Logger()
-            logg.log(" Exit :  \(region.identifier)")
-            
-           // self.fireNotification(notificationText: "Did Exit: \(region.identifier) region", didEnter: false)
-            //self.localNotification(notificationText: "Did Exit: \(region.identifier) region", didEnter: false)
-
-            AF.request("\(self.spotsenseURL)/\(self.clientID)/rules/\(ruleID)/exit", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
-                switch response.result {
-                case .success(let data):
-                    if data is NSDictionary {
-                        //self.handleNotifyResponse(response: obj, ruleID: ruleID)
-                    }
-                case .failure(let error):
-                    print("\n Failure: \(error.localizedDescription)")
-               }
-            }
-          }
         }
-      }
+    }
     
     open func handleLocationUpdate(location: CLLocation) {
         
         self.getToken {
-                  let tokenHeaders: HTTPHeaders = [
-                             "content-type": "application/json",
-                             "Authorization": "Bearer \(self.token!)"
-                         ]
-               
-        let parameters: Parameters = [
-            "deviceID": "\(self.deviceID)",
-            "location": "\(location)"
-        ]
-        
-
-            AF.request("\(self.spotsenseURL)/\(self.clientID)/locations", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
-                switch response.result {
-                case .success(let data):
-                    if data is NSDictionary {
-                    }
-                case .failure(let error):
-                    print("\n Failure: \(error.localizedDescription)")
-                }
+            let parameters: Parameters = [
+                "deviceID": "\(self.deviceID)",
+                "location": "\(location)"
+            ]
+            
+            self.networkManager.updateLocation(clientID: self.clientID, param: parameters) { jsonResponse in
+                
+            } errorHandler: { error in
+                print("\n Failure: \(error ?? "")")
             }
         }
-      }
+    }
     
     open func handleBeaconEnterState(beaconScanner: SpotSense, beaconInfo: BeaconInfo ,data: NSDictionary) {
-      
+        
         let ruleID = data["id"] as! String
         
-     //   print(ruleID)
+        //   print(ruleID)
         self.getToken {
-                  let tokenHeaders: HTTPHeaders = [
-                             "content-type": "application/json",
-                             "Authorization": "Bearer \(self.token!)"
-                         ]
-               
-        let parameters: Parameters = [
-            "userID": "\(self.clientID)-\(self.deviceID)"
-        ]
-        
-      //  print(parameters)
-        
-        print("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/enter")
-        
-         //   print("Notify enter for beacon: \(ruleID)")
+            let parameters: Parameters = [
+                "userID": "\(self.clientID)-\(self.deviceID)"
+            ]
+            
+            //  print(parameters)
+            
+            print("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/enter")
+            
+            //   print("Notify enter for beacon: \(ruleID)")
             
             let logg = Logger()
             logg.log(" Enter : \(ruleID)")
             
-           // self.fireNotification(notificationText: "Did Arrive: \(ruleID) Beacon.", didEnter: true)
-
-            AF.request("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/enter", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
-                switch response.result {
-                    
-                case .success(let data):
-                    if data is NSDictionary {
-                       // self.handleNotifyResponse(response: obj, ruleID: ruleID)
-                    }
-                case .failure(let error):
-                    print("\n Failure: \(error.localizedDescription)")
-                }
+            // self.fireNotification(notificationText: "Did Arrive: \(ruleID) Beacon.", didEnter: true)
+            
+            self.networkManager.beaconEnterState(clientID: self.clientID,
+                                                 ruleID: ruleID,
+                                                 param: parameters) { jsonResponse in
+                // self.handleNotifyResponse(response: obj, ruleID: ruleID)
+            } errorHandler: { error in
+                print("\n Failure: \(error ?? "")")
             }
         }
-      }
+    }
 
     open func handleBeaconExitState(beaconScanner: SpotSense, beaconInfo: BeaconInfo ,data: NSDictionary) {
-      
-       // let ruleID = beaconInfo.description
+        
+        // let ruleID = beaconInfo.description
         
         let ruleID = data["id"] as! String
-
+        
         self.getToken {
-                  let tokenHeaders: HTTPHeaders = [
-                             "content-type": "application/json",
-                             "Authorization": "Bearer \(self.token!)"
-                         ]
-               
-        let parameters: Parameters = [
-            "userID": "\(self.clientID)-\(self.deviceID)"
-        ]
-        
-        print(parameters)
-        
-        print("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/exit")
-        
+            
+            let parameters: Parameters = [
+                "userID": "\(self.clientID)-\(self.deviceID)"
+            ]
+            
+            print(parameters)
+            
+            print("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/exit")
+            
             print("Notify exit for beacon: \(ruleID)")
             
             let logg = Logger()
             logg.log(" Exit :  \(ruleID)")
             
-           // self.fireNotification(notificationText: "Did Exit: \(ruleID) beacon", didEnter: false)
-
-            AF.request("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/exit", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: tokenHeaders).responseJSON { response in
-                switch response.result {
-                case .success(let data):
-                    if data is NSDictionary {
-                        
-                        //self.handleNotifyResponse(response: obj, ruleID: ruleID)
-                    }
-                case .failure(let error):
-                    print("\n Failure: \(error.localizedDescription)")
-               }
+            // self.fireNotification(notificationText: "Did Exit: \(ruleID) beacon", didEnter: false)
+            
+            self.networkManager.beaconExitState(clientID: self.clientID, ruleID: ruleID, param: parameters) { jsonResponse in
+                //self.handleNotifyResponse(response: obj, ruleID: ruleID)
+            } errorHandler: { error in
+                print("\n Failure: \(error ?? "")")
+            }
         }
-      }
     }
 
     
@@ -865,203 +729,4 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
         self.centralManager.scanForPeripherals(withServices: services, options: options)
       }
     }
-}
-public class BeaconInfo : NSObject {
-
-  static let EddystoneUIDFrameTypeID: UInt8 = 0x00
-  static let EddystoneURLFrameTypeID: UInt8 = 0x10
-  static let EddystoneTLMFrameTypeID: UInt8 = 0x20
-  static let EddystoneEIDFrameTypeID: UInt8 = 0x30
-    
- public enum EddystoneFrameType {
-    case UnknownFrameType
-    case UIDFrameType
-    case URLFrameType
-    case TelemetryFrameType
-    case EIDFrameType
-
-    var description: String {
-      switch self {
-      case .UnknownFrameType:
-        return "Unknown Frame Type"
-      case .UIDFrameType:
-        return "UID Frame"
-      case .URLFrameType:
-        return "URL Frame"
-      case .TelemetryFrameType:
-        return "TLM Frame"
-      case .EIDFrameType:
-        return "EID Frame"
-      }
-    }
-  }
-
- public let beaconID: BeaconID
-  let txPower: Int
-  let RSSI: Int
-  let telemetry: NSData?
-
-  public init(beaconID: BeaconID, txPower: Int, RSSI: Int, telemetry: NSData?) {
-    self.beaconID = beaconID
-    self.txPower = txPower
-    self.RSSI = RSSI
-    self.telemetry = telemetry
-  }
-
-public class func frameTypeForFrame(advertisementFrameList: [NSObject : AnyObject]) -> EddystoneFrameType {
-      let uuid = CBUUID(string: "FEAA")
-      if let frameData = advertisementFrameList[uuid] as? NSData {
-        if frameData.length > 1 {
-          let count = frameData.length
-          var frameBytes = [UInt8](repeating: 0, count: count)
-          frameData.getBytes(&frameBytes, length: count)
-
-          if frameBytes[0] == EddystoneUIDFrameTypeID {
-            return EddystoneFrameType.UIDFrameType
-          } else if frameBytes[0] == EddystoneTLMFrameTypeID {
-            return EddystoneFrameType.TelemetryFrameType
-          } else if frameBytes[0] == EddystoneEIDFrameTypeID {
-            return EddystoneFrameType.EIDFrameType
-          } else if frameBytes[0] == EddystoneURLFrameTypeID {
-            return EddystoneFrameType.URLFrameType
-          }
-        }
-    }
-
-     return EddystoneFrameType.UnknownFrameType
-  }
-
- public class func telemetryDataForFrame(advertisementFrameList: [NSObject : AnyObject]!) -> NSData? {
-    return advertisementFrameList[CBUUID(string: "FEAA")] as? NSData
-  }
-
-  ///
-  /// Unfortunately, this can't be a failable convenience initialiser just yet because of a "bug"
-  /// in the Swift compiler — it can't tear-down partially initialised objects, so we'll have to
-  /// wait until this gets fixed. For now, class method will do.
-  ///
- public class func beaconInfoForUIDFrameData(frameData: NSData, telemetry: NSData?, RSSI: Int) -> BeaconInfo? {
-      if frameData.length > 1 {
-        let count = frameData.length
-        var frameBytes = [UInt8](repeating: 0, count: count)
-        frameData.getBytes(&frameBytes, length: count)
-
-        if frameBytes[0] != EddystoneUIDFrameTypeID {
-          NSLog("Unexpected non UID Frame passed to BeaconInfoForUIDFrameData.")
-          return nil
-        } else if frameBytes.count < 18 {
-          NSLog("Frame Data for UID Frame unexpectedly truncated in BeaconInfoForUIDFrameData.")
-        }
-
-        let txPower = Int(Int8(bitPattern:frameBytes[1]))
-        let beaconID: [UInt8] = Array(frameBytes[2..<18])
-        let bid = BeaconID(beaconType: BeaconID.BeaconType.Eddystone, beaconID: beaconID)
-        return BeaconInfo(beaconID: bid, txPower: txPower, RSSI: RSSI, telemetry: telemetry)
-      }
-
-      return nil
-  }
-
- public class func beaconInfoForEIDFrameData(frameData: NSData, telemetry: NSData?, RSSI: Int) -> BeaconInfo? {
-      if frameData.length > 1 {
-        let count = frameData.length
-        var frameBytes = [UInt8](repeating: 0, count: count)
-        frameData.getBytes(&frameBytes, length: count)
-
-        if frameBytes[0] != EddystoneEIDFrameTypeID {
-          NSLog("Unexpected non EID Frame passed to BeaconInfoForEIDFrameData.")
-          return nil
-        } else if frameBytes.count < 10 {
-          NSLog("Frame Data for EID Frame unexpectedly truncated in BeaconInfoForEIDFrameData.")
-        }
-
-        let txPower = Int(Int8(bitPattern:frameBytes[1]))
-        let beaconID: [UInt8] = Array(frameBytes[2..<10])
-        let bid = BeaconID(beaconType: BeaconID.BeaconType.EddystoneEID, beaconID: beaconID)
-        return BeaconInfo(beaconID: bid, txPower: txPower, RSSI: RSSI, telemetry: telemetry)
-      }
-
-      return nil
-  }
-
-public  class func parseURLFromFrame(frameData: NSData) -> NSURL? {
-    if frameData.length > 0 {
-      let count = frameData.length
-      var frameBytes = [UInt8](repeating: 0, count: count)
-      frameData.getBytes(&frameBytes, length: count)
-
-      if let URLPrefix = URLPrefixFromByte(schemeID: frameBytes[2]) {
-        var output = URLPrefix
-        for i in 3..<frameBytes.count {
-          if let encoded = encodedStringFromByte(charVal: frameBytes[i]) {
-            output.append(encoded)
-          }
-        }
-
-        return NSURL(string: output)
-      }
-    }
-
-    return nil
-  }
-
-    override open var description: String {
-    switch self.beaconID.beaconType {
-    case .Eddystone:
-      return "Eddystone \(self.beaconID), txPower: \(self.txPower), RSSI: \(self.RSSI)"
-    case .EddystoneEID:
-      return "Eddystone EID \(self.beaconID), txPower: \(self.txPower), RSSI: \(self.RSSI)"
-    }
-  }
-
-public  class func URLPrefixFromByte(schemeID: UInt8) -> String? {
-    switch schemeID {
-    case 0x00:
-      return "http://www."
-    case 0x01:
-      return "https://www."
-    case 0x02:
-      return "http://"
-    case 0x03:
-      return "https://"
-    default:
-      return nil
-    }
-  }
-
-public  class func encodedStringFromByte(charVal: UInt8) -> String? {
-    switch charVal {
-    case 0x00:
-      return ".com/"
-    case 0x01:
-      return ".org/"
-    case 0x02:
-      return ".edu/"
-    case 0x03:
-      return ".net/"
-    case 0x04:
-      return ".info/"
-    case 0x05:
-      return ".biz/"
-    case 0x06:
-      return ".gov/"
-    case 0x07:
-      return ".com"
-    case 0x08:
-      return ".org"
-    case 0x09:
-      return ".edu"
-    case 0x0a:
-      return ".net"
-    case 0x0b:
-      return ".info"
-    case 0x0c:
-      return ".biz"
-    case 0x0d:
-      return ".gov"
-    default:
-      return String(data: Data(bytes: [ charVal ] as [UInt8], count: 1), encoding: .utf8)
-    }
-  }
-
 }

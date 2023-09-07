@@ -29,11 +29,10 @@ Pod::Spec.new do |s|
 
 
 
-  s.source_files  = "SpotSenseSDK/*.{swift,plist}"
+  s.source_files  = "SpotSenseSDK/**/*.{swift,plist}"
   s.exclude_files = "Classes/Exclude"
-
-
-  s.dependency 'Alamofire'
+  
+  
   s.dependency 'JWTDecode'
 
 end

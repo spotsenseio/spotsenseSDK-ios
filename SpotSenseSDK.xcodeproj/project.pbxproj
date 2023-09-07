@@ -14,6 +14,19 @@
 		3243170F215869F500ABDA34 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 3243170E215869F500ABDA34 /* LICENSE */; };
 		6C53FFCE241A2DD2005D9D11 /* Eddystone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C53FFCC241A2DD2005D9D11 /* Eddystone.swift */; };
 		6C53FFCF241A2DD2005D9D11 /* DispatchTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C53FFCD241A2DD2005D9D11 /* DispatchTimer.swift */; };
+		BA61E06D2AA8EAC30023E2FD /* BeaconInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA61E06C2AA8EAC30023E2FD /* BeaconInfo.swift */; };
+		BA61E09E2AA8F48E0023E2FD /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA61E08F2AA8F48E0023E2FD /* ParameterEncoding.swift */; };
+		BA61E09F2AA8F48E0023E2FD /* URLParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA61E0902AA8F48E0023E2FD /* URLParameterEncoding.swift */; };
+		BA61E0A02AA8F48E0023E2FD /* JSONParameterEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA61E0912AA8F48E0023E2FD /* JSONParameterEncoder.swift */; };
+		BA61E0A12AA8F48E0023E2FD /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA61E0932AA8F48E0023E2FD /* NetworkManager.swift */; };
+		BA61E0A22AA8F48E0023E2FD /* NetworkManagable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA61E0942AA8F48E0023E2FD /* NetworkManagable.swift */; };
+		BA61E0A32AA8F48E0023E2FD /* SpotSenseAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA61E0962AA8F48E0023E2FD /* SpotSenseAPI.swift */; };
+		BA61E0A42AA8F48E0023E2FD /* TokenAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA61E0972AA8F48E0023E2FD /* TokenAPI.swift */; };
+		BA61E0A52AA8F48E0023E2FD /* HTTPTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA61E0992AA8F48E0023E2FD /* HTTPTask.swift */; };
+		BA61E0A62AA8F48E0023E2FD /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA61E09A2AA8F48E0023E2FD /* HTTPMethod.swift */; };
+		BA61E0A72AA8F48E0023E2FD /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA61E09B2AA8F48E0023E2FD /* Router.swift */; };
+		BA61E0A82AA8F48E0023E2FD /* NetworkLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA61E09C2AA8F48E0023E2FD /* NetworkLogger.swift */; };
+		BA61E0A92AA8F48E0023E2FD /* EndPointType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA61E09D2AA8F48E0023E2FD /* EndPointType.swift */; };
 		BB3927275612E2C812047A9D /* Pods_SpotSenseSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A6B3B05DC161F005FB275DA /* Pods_SpotSenseSDK.framework */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +44,19 @@
 		6C53FFD2241A322D005D9D11 /* Async.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Async.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C53FFD4241A322D005D9D11 /* JWTDecode.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JWTDecode.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A6B3B05DC161F005FB275DA /* Pods_SpotSenseSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpotSenseSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BA61E06C2AA8EAC30023E2FD /* BeaconInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconInfo.swift; sourceTree = "<group>"; };
+		BA61E08F2AA8F48E0023E2FD /* ParameterEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterEncoding.swift; sourceTree = "<group>"; };
+		BA61E0902AA8F48E0023E2FD /* URLParameterEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLParameterEncoding.swift; sourceTree = "<group>"; };
+		BA61E0912AA8F48E0023E2FD /* JSONParameterEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONParameterEncoder.swift; sourceTree = "<group>"; };
+		BA61E0932AA8F48E0023E2FD /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		BA61E0942AA8F48E0023E2FD /* NetworkManagable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManagable.swift; sourceTree = "<group>"; };
+		BA61E0962AA8F48E0023E2FD /* SpotSenseAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotSenseAPI.swift; sourceTree = "<group>"; };
+		BA61E0972AA8F48E0023E2FD /* TokenAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokenAPI.swift; sourceTree = "<group>"; };
+		BA61E0992AA8F48E0023E2FD /* HTTPTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPTask.swift; sourceTree = "<group>"; };
+		BA61E09A2AA8F48E0023E2FD /* HTTPMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
+		BA61E09B2AA8F48E0023E2FD /* Router.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		BA61E09C2AA8F48E0023E2FD /* NetworkLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkLogger.swift; sourceTree = "<group>"; };
+		BA61E09D2AA8F48E0023E2FD /* EndPointType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndPointType.swift; sourceTree = "<group>"; };
 		E0A7B23F0697F845E9522353 /* Pods-SpotSenseSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotSenseSDK.release.xcconfig"; path = "Pods/Target Support Files/Pods-SpotSenseSDK/Pods-SpotSenseSDK.release.xcconfig"; sourceTree = "<group>"; };
 		F53588DBAD72D68E85DEABA7 /* Pods-SpotSenseSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotSenseSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpotSenseSDK/Pods-SpotSenseSDK.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -79,14 +105,67 @@
 		324316FB2156264900ABDA34 /* SpotSenseSDK */ = {
 			isa = PBXGroup;
 			children = (
+				BA61E08D2AA8F48E0023E2FD /* NetworkLayer */,
 				6C53FFCD241A2DD2005D9D11 /* DispatchTimer.swift */,
 				6C53FFCC241A2DD2005D9D11 /* Eddystone.swift */,
 				324316FC2156264900ABDA34 /* SpotSenseSDK.h */,
 				32431704215628DE00ABDA34 /* Rule.swift */,
 				3243170821562B1200ABDA34 /* SpotSenseApp.swift */,
 				32431705215628DE00ABDA34 /* SpotSense.swift */,
+				BA61E06C2AA8EAC30023E2FD /* BeaconInfo.swift */,
 			);
 			path = SpotSenseSDK;
+			sourceTree = "<group>";
+		};
+		BA61E08D2AA8F48E0023E2FD /* NetworkLayer */ = {
+			isa = PBXGroup;
+			children = (
+				BA61E08E2AA8F48E0023E2FD /* Encoding */,
+				BA61E0922AA8F48E0023E2FD /* Manager */,
+				BA61E0952AA8F48E0023E2FD /* EndPoint */,
+				BA61E0982AA8F48E0023E2FD /* Service */,
+			);
+			path = NetworkLayer;
+			sourceTree = "<group>";
+		};
+		BA61E08E2AA8F48E0023E2FD /* Encoding */ = {
+			isa = PBXGroup;
+			children = (
+				BA61E08F2AA8F48E0023E2FD /* ParameterEncoding.swift */,
+				BA61E0902AA8F48E0023E2FD /* URLParameterEncoding.swift */,
+				BA61E0912AA8F48E0023E2FD /* JSONParameterEncoder.swift */,
+			);
+			path = Encoding;
+			sourceTree = "<group>";
+		};
+		BA61E0922AA8F48E0023E2FD /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				BA61E0932AA8F48E0023E2FD /* NetworkManager.swift */,
+				BA61E0942AA8F48E0023E2FD /* NetworkManagable.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
+		BA61E0952AA8F48E0023E2FD /* EndPoint */ = {
+			isa = PBXGroup;
+			children = (
+				BA61E0962AA8F48E0023E2FD /* SpotSenseAPI.swift */,
+				BA61E0972AA8F48E0023E2FD /* TokenAPI.swift */,
+			);
+			path = EndPoint;
+			sourceTree = "<group>";
+		};
+		BA61E0982AA8F48E0023E2FD /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				BA61E0992AA8F48E0023E2FD /* HTTPTask.swift */,
+				BA61E09A2AA8F48E0023E2FD /* HTTPMethod.swift */,
+				BA61E09B2AA8F48E0023E2FD /* Router.swift */,
+				BA61E09C2AA8F48E0023E2FD /* NetworkLogger.swift */,
+				BA61E09D2AA8F48E0023E2FD /* EndPointType.swift */,
+			);
+			path = Service;
 			sourceTree = "<group>";
 		};
 		CB17BBA9F8F45107F6F8F029 /* Frameworks */ = {
@@ -202,11 +281,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA61E0A52AA8F48E0023E2FD /* HTTPTask.swift in Sources */,
+				BA61E0A42AA8F48E0023E2FD /* TokenAPI.swift in Sources */,
+				BA61E0A92AA8F48E0023E2FD /* EndPointType.swift in Sources */,
+				BA61E09F2AA8F48E0023E2FD /* URLParameterEncoding.swift in Sources */,
+				BA61E09E2AA8F48E0023E2FD /* ParameterEncoding.swift in Sources */,
+				BA61E0A12AA8F48E0023E2FD /* NetworkManager.swift in Sources */,
 				6C53FFCE241A2DD2005D9D11 /* Eddystone.swift in Sources */,
 				6C53FFCF241A2DD2005D9D11 /* DispatchTimer.swift in Sources */,
+				BA61E06D2AA8EAC30023E2FD /* BeaconInfo.swift in Sources */,
+				BA61E0A72AA8F48E0023E2FD /* Router.swift in Sources */,
+				BA61E0A62AA8F48E0023E2FD /* HTTPMethod.swift in Sources */,
+				BA61E0A02AA8F48E0023E2FD /* JSONParameterEncoder.swift in Sources */,
 				3243170921562B1200ABDA34 /* SpotSenseApp.swift in Sources */,
+				BA61E0A22AA8F48E0023E2FD /* NetworkManagable.swift in Sources */,
 				32431707215628DE00ABDA34 /* SpotSense.swift in Sources */,
 				32431706215628DE00ABDA34 /* Rule.swift in Sources */,
+				BA61E0A82AA8F48E0023E2FD /* NetworkLogger.swift in Sources */,
+				BA61E0A32AA8F48E0023E2FD /* SpotSenseAPI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,7 +441,8 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = SpotSenseSDK/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -378,7 +471,8 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = SpotSenseSDK/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
