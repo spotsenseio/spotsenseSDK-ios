@@ -65,9 +65,6 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
     public var locationManager:CLLocationManager?
     public let notificationCenter = UNUserNotificationCenter.current()
 
-    // API base URL
-    let spotsenseURL = "https://3o7us23hzl.execute-api.us-west-1.amazonaws.com/roor"
-    
     //Beacon
     var onLostTimeout: Double = 15.0
 
@@ -89,9 +86,9 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
         
         super.init()
 
-        OperationQueue.main.addOperation{
+//        OperationQueue.main.addOperation{
             self.locationManager = CLLocationManager()
-        }
+//        }
         self.centralManager = CBCentralManager(delegate: self, queue: self.beaconOperationsQueue)
         self.centralManager.delegate = self
 
@@ -190,6 +187,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
     
     private func setToken(tokenStr: String) {
 //        print("Got the token")
+        NetworkManager.token = tokenStr
         self.token = tokenStr
     }
     
@@ -365,7 +363,6 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
             
             print(parameters)
             
-            print("\(self.spotsenseURL)/\(self.clientID)/rules/\(ruleID)/enter")
             
             if state == .inside { // equivalent to an enter
                 print("Notify enter for region: \(region.identifier)")
@@ -427,10 +424,6 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
                 "userID": "\(self.clientID)-\(self.deviceID)"
             ]
             
-            //  print(parameters)
-            
-            print("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/enter")
-            
             //   print("Notify enter for beacon: \(ruleID)")
             
             let logg = Logger()
@@ -459,10 +452,6 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
             let parameters: Parameters = [
                 "userID": "\(self.clientID)-\(self.deviceID)"
             ]
-            
-            print(parameters)
-            
-            print("\(self.spotsenseURL)/\(self.clientID)/beaconRules/\(ruleID)/exit")
             
             print("Notify exit for beacon: \(ruleID)")
             

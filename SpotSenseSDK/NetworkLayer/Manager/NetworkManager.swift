@@ -29,7 +29,7 @@ struct NetworkManager: NetworkManagable {
     
     static let shared = NetworkManager()
     static let environment : NetworkEnvironment = .production
-    static let token = ""
+    static var token = ""
     let router = Router<SpotSenseAPI>()
     let tokenRouter = Router<TokenAPI>()
     
