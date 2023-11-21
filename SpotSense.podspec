@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
   s.author             = { "spotsenseio" => "jonny@spotsense.io" }
   s.social_media_url = "https://twitter.com/spotsenseio"
 
-  s.platform     = :ios, "10.0"
+  s.platform     = :ios, "13.0"
   s.swift_version = '4.2'
 
 

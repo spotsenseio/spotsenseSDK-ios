@@ -40,13 +40,13 @@ import CoreBluetooth
 
 public protocol SpotSenseDelegate {
     func ruleDidTrigger(response: NotifyResponse, ruleID: String)
-    func didFindBeacon(beaconScanner: SpotSense, beaconInfo: BeaconInfo, data : NSDictionary)
-    func didLoseBeacon(beaconScanner: SpotSense, beaconInfo: BeaconInfo, data : NSDictionary)
-    func didUpdateBeacon(beaconScanner: SpotSense, beaconInfo: BeaconInfo , data : NSDictionary)
+    func didFindBeacon(beaconScanner: SpotSense, beacon: CLBeacon, data: [String:Any])
+    func didLoseBeacon(beaconScanner: SpotSense, beacon: CLBeacon, data: [String:Any])
+    func didUpdateBeacon(beaconScanner: SpotSense, beacon: CLBeacon, data: [String:Any])
     func didObserveURLBeacon(beaconScanner: SpotSense, URL: NSURL, RSSI: Int)
 }
 
-open class SpotSense: NSObject, CBCentralManagerDelegate {
+open class SpotSense: NSObject {
    
     
     public var delegate:SpotSenseDelegate?
@@ -57,7 +57,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
     public var token: String?
     public var appInfo: SpotSenseApp?
     public var rules = [Rule]()
-    public var beacons = [NSDictionary]()
+    public var beacons: [[String:Any]] = []
     public var notificationsEnabled:Bool?
     public var locationEnabled:CLAuthorizationStatus?
     public var segueTriggered:Bool = false
@@ -68,7 +68,6 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
     //Beacon
     var onLostTimeout: Double = 15.0
 
-    public var centralManager: CBCentralManager!
     public let beaconOperationsQueue = DispatchQueue(label: "beacon_operations_queue")
     public var shouldBeScanning = false
 
@@ -81,17 +80,18 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
         
         self.clientID = clientID
         self.clientSecret = clientSecret
-        self.deviceID = (UIDevice.current.identifierForVendor?.uuidString)!
+        self.deviceID = (UIDevice.current.identifierForVendor?.uuidString) ?? UUID().uuidString
         print(self.deviceID)
         
         super.init()
-
-//        OperationQueue.main.addOperation{
-            self.locationManager = CLLocationManager()
-//        }
-        self.centralManager = CBCentralManager(delegate: self, queue: self.beaconOperationsQueue)
-        self.centralManager.delegate = self
-
+        
+        self.locationManager = CLLocationManager()
+        
+        // get location permissions
+        self.locationManager?.delegate = self
+        self.locationManager?.requestAlwaysAuthorization()
+        self.locationManager?.startUpdatingLocation()
+        
         self.initApp(completion: {
             print("Spotsense initialization complete")
         })
@@ -332,7 +332,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
                     self.notificationCenter.removeAllPendingNotificationRequests()
                     
                     for beconAny in beacons {
-                        if let beconDict = beconAny as? NSDictionary { // get the individual rule object
+                        if let beconDict = beconAny as? [String:Any] { // get the individual rule object
                             // let becon = Rule(ruleDict: beconDict )
                             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
                             self.beacons.append(beconDict) // add to array to keep track
@@ -414,9 +414,9 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
         }
     }
     
-    open func handleBeaconEnterState(beaconScanner: SpotSense, beaconInfo: BeaconInfo ,data: NSDictionary) {
+    open func handleBeaconEnterState(beaconScanner: SpotSense, data: [String:Any]) {
         
-        let ruleID = data["id"] as! String
+        let ruleID = data["id"] as? String ?? ""
         
         //   print(ruleID)
         self.getToken {
@@ -429,7 +429,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
             let logg = Logger()
             logg.log(" Enter : \(ruleID)")
             
-            // self.fireNotification(notificationText: "Did Arrive: \(ruleID) Beacon.", didEnter: true)
+             self.fireNotification(notificationText: "Did Arrive: \(ruleID) Beacon.", didEnter: true)
             
             self.networkManager.beaconEnterState(clientID: self.clientID,
                                                  ruleID: ruleID,
@@ -441,11 +441,11 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
         }
     }
 
-    open func handleBeaconExitState(beaconScanner: SpotSense, beaconInfo: BeaconInfo ,data: NSDictionary) {
+    open func handleBeaconExitState(beaconScanner: SpotSense, data: [String:Any]) {
         
         // let ruleID = beaconInfo.description
         
-        let ruleID = data["id"] as! String
+        let ruleID = data["id"] as? String ?? ""
         
         self.getToken {
             
@@ -458,7 +458,7 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
             let logg = Logger()
             logg.log(" Exit :  \(ruleID)")
             
-            // self.fireNotification(notificationText: "Did Exit: \(ruleID) beacon", didEnter: false)
+             self.fireNotification(notificationText: "Did Exit: \(ruleID) beacon", didEnter: false)
             
             self.networkManager.beaconExitState(clientID: self.clientID, ruleID: ruleID, param: parameters) { jsonResponse in
                 //self.handleNotifyResponse(response: obj, ruleID: ruleID)
@@ -572,150 +572,112 @@ open class SpotSense: NSObject, CBCentralManagerDelegate {
     /// Stops scanning for Eddystone beacons.
     ///
    public func stopScanning() {
-      self.centralManager.stopScan()
+       for beacon in beacons {
+           if let uuidString = beacon["namespace"] as? String,
+              let UUID = UUID(uuidString: uuidString) {
+               let beaconRegion = CLBeaconRegion(uuid: UUID, identifier: "My Beacon")
+               beaconRegion.notifyOnEntry = true
+               beaconRegion.notifyOnExit = true
+               locationManager?.stopMonitoring(for: beaconRegion)
+               locationManager?.startRangingBeacons(satisfying: beaconRegion.beaconIdentityConstraint)
+           }
+       }
     }
 
-    ///
-    /// MARK - private methods and delegate callbacks
-    ///
-      public func centralManagerDidUpdateState(_ central: CBCentralManager) {
-      if central.state == .poweredOn && self.shouldBeScanning {
-        self.startScanningSynchronized();
-      }
+
+    public func startScanningSynchronized() {
+        for beacon in beacons {
+            if let uuidString = (beacon["namespace"] as? String)?.uppercased(),
+               let UUID = UUID(uuidString: uuidString) {
+                let beaconName = beacon["beaconName"] as? String ?? ""
+                let beaconRegion = CLBeaconRegion(uuid: UUID, identifier: beaconName)
+                beaconRegion.notifyOnEntry = true
+                beaconRegion.notifyOnExit = true
+                locationManager?.startMonitoring(for: beaconRegion)
+                locationManager?.startRangingBeacons(satisfying: beaconRegion.beaconIdentityConstraint)
+            }
+        }
+        locationManager?.startMonitoringVisits()
+    }
+}
+
+
+extension SpotSense : CLLocationManagerDelegate {
+    // required so spotsense knows which geofences are being triggered
+    public func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
+        self.handleRegionState(region: region, state: state)
     }
 
-    ///
-    /// Core Bluetooth CBCentralManager callback when we discover a beacon. We're not super
-    /// interested in any error situations at this point in time.
-    ///
+    
+    // Not required: Prints which rules are being monitored for, helpful for debugging
+    public func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
+        print("Started monitoring for \(region.identifier)")
+    }
 
-    public func centralManager(_ central: CBCentralManager,
-                        didDiscover peripheral: CBPeripheral,
-                        advertisementData: [String : Any],
-                        rssi RSSI: NSNumber) {
-      if let serviceData = advertisementData[CBAdvertisementDataServiceDataKey]
-        as? [NSObject : AnyObject] {
-        var eft: BeaconInfo.EddystoneFrameType
-        eft = BeaconInfo.frameTypeForFrame(advertisementFrameList: serviceData)
-
-        // If it's a telemetry frame, stash it away and we'll send it along with the next regular
-        // frame we see. Otherwise, process the UID frame.
-        if eft == BeaconInfo.EddystoneFrameType.TelemetryFrameType {
-          deviceIDCache[peripheral.identifier] = BeaconInfo.telemetryDataForFrame(advertisementFrameList: serviceData)
-        } else if eft == BeaconInfo.EddystoneFrameType.UIDFrameType
-                  || eft == BeaconInfo.EddystoneFrameType.EIDFrameType {
-          let telemetry = self.deviceIDCache[peripheral.identifier]
-          let serviceUUID = CBUUID(string: "FEAA")
-          let _RSSI: Int = RSSI.intValue
-
-          if let beaconServiceData = serviceData[serviceUUID] as? NSData,
-            let beaconInfo =
-              (eft == BeaconInfo.EddystoneFrameType.UIDFrameType
-                ? BeaconInfo.beaconInfoForUIDFrameData(frameData: beaconServiceData, telemetry: telemetry,
-                                                       RSSI: _RSSI)
-                : BeaconInfo.beaconInfoForEIDFrameData(frameData: beaconServiceData, telemetry: telemetry,
-                                                       RSSI: _RSSI)) {
-
+    public func locationManager(_ manager: CLLocationManager, didRange beacons: [CLBeacon], satisfying beaconConstraint: CLBeaconIdentityConstraint) {
+        for beacon in beacons {
+            let serviceUUID = beacon.uuid
+            let _RSSI: Int = beacon.rssi
+            let beaconData = self.beacons.first(where: {(($0["namespace"] as? String)?.caseInsensitiveCompare(serviceUUID.uuidString) == .orderedSame)}) ?? [:]
+            
             // NOTE: At this point you can choose whether to keep or get rid of the telemetry
             //       data. You can either opt to include it with every single beacon sighting
             //       for this beacon, or delete it until we get a new / "fresh" TLM frame.
             //       We'll treat it as "report it only when you see it", so we'll delete it
             //       each time.
             
-            self.deviceIDCache.removeValue(forKey: peripheral.identifier)
-
-            if (self.seenEddystoneCache[beaconInfo.beaconID.description] != nil) {
-              // Reset the onLost timer and fire the didUpdate.
-              if let timer =
-                self.seenEddystoneCache[beaconInfo.beaconID.description]?["onLostTimer"]
-                  as? DispatchTimer {
-                timer.reschedule()
-              }
-                
-                for dic in beacons {
-                    
-                    let str = dic["namespace"] as! String
-                    
-//                    let str1 = String(beaconInfo.beaconID.description.prefix(20))
-                    let str1 = beaconInfo.beaconID.description
-
-                  
-                    if str1.range(of:str) != nil {
-                                self.delegate?.didUpdateBeacon(beaconScanner: self, beaconInfo: beaconInfo,data: dic)
-                    }
+            if (self.seenEddystoneCache[serviceUUID.uuidString] != nil) {
+                // Reset the onLost timer and fire the didUpdate.
+                if let timer =
+                    self.seenEddystoneCache[serviceUUID.uuidString]?["onLostTimer"]
+                    as? DispatchTimer {
+                    timer.reschedule()
                 }
+                
+                self.delegate?.didUpdateBeacon(beaconScanner: self, beacon: beacon, data: beaconData)
                 
             } else {
-              // We've never seen this beacon before
+                // We've never seen this beacon before
                 
-
-                for dic in beacons {
-                    
-                    let str = dic["namespace"] as! String
-                    
-//                    let str1 = String(beaconInfo.beaconID.description.prefix(20))
-                    let str1 = beaconInfo.beaconID.description
-                   
-                    if str1.range(of:str) != nil {
-                        self.delegate?.didFindBeacon(beaconScanner: self, beaconInfo: beaconInfo, data: dic)
+                self.delegate?.didFindBeacon(beaconScanner: self, beacon: beacon, data: beaconData)
+                
+                let onLostTimer = DispatchTimer.scheduledDispatchTimer(
+                    delay: self.onLostTimeout,
+                    queue: DispatchQueue.main) {
+                        (timer: DispatchTimer) -> () in
+                        let cacheKey = serviceUUID.uuidString
+                        if let beaconCache = self.seenEddystoneCache[cacheKey] {
+                            
+                            self.delegate?.didLoseBeacon(beaconScanner: self, beacon: beacon, data: beaconData)
+                            self.seenEddystoneCache.removeValue(forKey: cacheKey)
+                        }
                     }
-                }
                 
-              let onLostTimer = DispatchTimer.scheduledDispatchTimer(
-                delay: self.onLostTimeout,
-                queue: DispatchQueue.main) {
-                  (timer: DispatchTimer) -> () in
-                  let cacheKey = beaconInfo.beaconID.description
-                  if let
-                    beaconCache = self.seenEddystoneCache[cacheKey],
-                    let lostBeaconInfo = beaconCache["beaconInfo"] as? BeaconInfo {
-                    
-                    for dic in self.beacons {
-                                       
-                                       let str = dic["namespace"] as! String
-                                       
-//                                       let str1 = String(beaconInfo.beaconID.description.prefix(20))
-                                    let str1 = beaconInfo.beaconID.description
-                        
-                                    if str1.range(of:str) != nil {
-                                            self.delegate?.didLoseBeacon(beaconScanner: self, beaconInfo: lostBeaconInfo, data : dic)
-                                        }
-                                }
-                    
-                    self.seenEddystoneCache.removeValue(
-                      forKey: beaconInfo.beaconID.description)
-                  }
-              }
-
-              self.seenEddystoneCache[beaconInfo.beaconID.description] = [
-                "beaconInfo" : beaconInfo,
-                "onLostTimer" : onLostTimer
-              ]
+                self.seenEddystoneCache[serviceUUID.uuidString] = [
+                    "beaconInfo" : beacon,
+                    "onLostTimer" : onLostTimer
+                ]
             }
-          }
-        } else if eft == BeaconInfo.EddystoneFrameType.URLFrameType {
-          let serviceUUID = CBUUID(string: "FEAA")
-          let _RSSI: Int = RSSI.intValue
-
-          if let beaconServiceData = serviceData[serviceUUID] as? NSData,
-            let URL = BeaconInfo.parseURLFromFrame(frameData: beaconServiceData) {
-            self.delegate?.didObserveURLBeacon(beaconScanner: self, URL: URL, RSSI: _RSSI)
-          }
         }
-      } else {
-        NSLog("Unable to find service data; can't process Eddystone")
-      }
     }
-
-    public func startScanningSynchronized() {
-      if self.centralManager.state != .poweredOn {
-        NSLog("CentralManager state is %d, cannot start scan", self.centralManager.state.rawValue)
-        self.shouldBeScanning = true
-      } else {
-        NSLog("Starting to scan for Eddystones")
-        let services = [CBUUID(string: "FEAA")]
-        let options = [CBCentralManagerScanOptionAllowDuplicatesKey : true]
-        self.centralManager.scanForPeripherals(withServices: services, options: options)
-      }
+    
+    public func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        print("Located region")
+        if let localRegion = region as? CLBeaconRegion {
+            print("Beacon region")
+            manager.startRangingBeacons(satisfying: localRegion.beaconIdentityConstraint)
+        }
     }
+    
+    public func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: ["LocationServices"])
+        if let localRegion = region as? CLBeaconRegion {
+            manager.stopRangingBeacons(satisfying: localRegion.beaconIdentityConstraint)
+        }
+        print("Leave Beacon region")
+    }
+    
+    
+    
+    
 }
